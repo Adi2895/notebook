@@ -19,6 +19,20 @@ const fetchuser = (req, res, next) => {
     }
 
 }
-// app.use(fetchuser);
 
-module.exports.fetchuser = fetchuser;
+const localVariables = (req, res, next)=>{
+
+    req.app.locals = {
+        email:null,
+        OTP:null,
+        resetsession:false,
+    }
+    next();
+}
+
+module.exports = {
+    fetchuser,
+    localVariables,
+}
+
+// module.exports.fetchuser = fetchuser;
