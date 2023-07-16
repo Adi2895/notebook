@@ -124,7 +124,7 @@ router.put("/updatenote/:id",
             if (note.user.toString() !== req.user.id) { return res.status(401).send("Not Allowed") }
             note = await Note.findByIdAndDelete(req.params.id);
 
-            res.json({"Success" : "note have been deleted"});
+            res.json({"Success" : "Note have been deleted"});
         } catch (error) {
             
             // if there is some error in the code above 500 status code will be showed
