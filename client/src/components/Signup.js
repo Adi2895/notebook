@@ -1,92 +1,164 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import noteContext from "../context/notes/noteContext"
-import Noteitem from './Noteitem';
-import AddNote from './AddNote';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react'
+import "./style/signup.css"
+// import arrow from "./static/arrow.png"
+import { useNavigate, Link} from 'react-router-dom';
 
 const Notes = (props) => {
+
+  const [credentials, setCredentials] = useState({name:"", email:"", password : "", confirmPassword:""})
+    const [notEqual, setnotEqual] = useState("")
+    const [eyePass, seteyePass] = useState("fa-solid fa-eye");
+    const [eyeConfirm, seteyeConfirm] =useState("fa-solid fa-eye");
+    const [visiblepass, setVisiblepass] = useState("password");
+    const [visibleconfirm, setVisibleconfirm] = useState("password");
     const navigate = useNavigate();
-    const context = useContext(noteContext);
-    const { notes, getallnotes, editNote} = context;
-        useEffect(() => {
-            if(localStorage.getItem("token")){
-                getallnotes()
-            } else { 
-                navigate("/login");
-            }
-        
-            // eslint-disable-next-line
-        }, [])
 
-    const ref = useRef(null)
-    const refClose = useRef(null)
-    const [note, setNote] = useState({id : "", etitle: "", edescription: "", etag: ""})
+    const eyePassfun = ()=>{
 
-    const updateNote = (currentNote) => {
-
-        ref.current.click();
-        // console.log(currentNote._id);
-        setNote({id : currentNote._id, etitle: currentNote.title, edescription: currentNote.description, etag:currentNote.tag})
-        props.showAlert("Notes updated successfully" , "success")
+        if(eyePass === "fa-solid fa-eye") {
+            setVisiblepass("text")
+            seteyePass("fas fa-eye-slash")
+        } else {
+            setVisiblepass("password")
+            seteyePass("fa-solid fa-eye")
+        }
     }
 
-    const handleClick = (e)=>{
-        editNote(note.id, note.etitle, note.edescription, note.etag); 
-        refClose.current.click(); 
+    const eyeConfirmfun = ()=>{
+
+        if(eyeConfirm === "fa-solid fa-eye") {
+            setVisibleconfirm("text")
+            seteyeConfirm("fas fa-eye-slash")
+        } else {
+            setVisibleconfirm("password")
+            seteyeConfirm("fa-solid fa-eye")
+        }
     }
 
-    const onChange = (e)=>{
-        setNote({...note, [e.target.name]: e.target.value})
-    }
+    
+  const handleSubmit = async(e)=>{
+    const port = "http://localhost:3000";
+    e.preventDefault();
+
+    if( credentials.password === credentials.confirmPassword){
+      if(credentials.password != "")
+      setnotEqual(<i class="fa-solid fa-check" style={{color: "#24fbff;"}}></i>)
+
+
+    const response = await fetch(`${port}/api/auth/createuser`,
+    {
+      method: 'POST',
+      headers: {
+          "Content-Type": "application/json",
+          },
+          body : JSON.stringify({name:credentials.name,email:credentials.email , password:credentials.password}),
+      });
+
+      
+      const json  = await response.json();
+      // alert(response.status)
+      if(response.status == 500 || response.status == 400) {
+         
+        if( response.status == 500){
+          props.showAlert("Please fill the required details.", "danger")
+        } else{
+          props.showAlert(json.error, "danger")
+        }
+      } else {
+        props.showAlert(`Great! ${credentials.name}, You registered Successfully`, "primary")
+        navigate("/login")
+      }
+    } else {
+      setTimeout(() => {
+          setnotEqual("")
+      }, 3000);
+      setnotEqual("Please confirm the password")
+     
+  }
+  }
+
+
+  const onChange = (e)=>{
+    setCredentials({...credentials , [e.target.name] : e.target.value});
+}
+
+
+
+
+
 
     return (
         <>
-            <AddNote/>
-            
-            <button ref={ref}  type="button" className="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Launch demo modal
-            </button>
-            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Edit Note</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            <form className="my-3">
-                                <div className="mb-3">
-                                    <label htmlFor="title" className="form-label">Title</label>
-                                    <input type="text" className="form-control" id="etitle" name="etitle" value={note.etitle} aria-describedby="emailHelp" placeholder='Enter title' onChange={onChange} />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="description" className="form-label">Description</label>
-                                    <input type="text" className="form-control" id="edescription" name="edescription" value={note.edescription} placeholder='Write description about the title' onChange={onChange} />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="tag" className="form-label">Tag</label>
-                                    <input type="text" className="form-control" id="etag" name="etag" value={note.etag} placeholder='Tag' onChange={onChange} />
-                                </div>
 
-                            </form>
-                        </div>
-                        <div className="modal-footer">
-                            <button ref={refClose} onClick={handleClick} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button disabled={note.etitle.length < 2 || note.edescription.length < 5} onClick={handleClick} type="button" className="btn btn-primary">Update Note</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div className='sign-up d-flex justify-content-center'>
 
-            <div className="row my-3">
-                <h3>Your Notes</h3>
-                <div className="container">
-                    {notes.length === 0 && 'No notes to display'}
-                </div>
-                {notes.map((note) => {
-                    return <Noteitem key={note._id} updateNote={updateNote} note={note} />
-                })}
-            </div>
+     
+
+<form className="form-horizontal" action='' method="POST" onSubmit={handleSubmit}>
+  <fieldset>
+    <div id="legend">
+      <legend className="">Register</legend>
+    </div>
+
+
+    <div className='mb-3'>
+        <label for="" class="form-label">Name</label>
+        <input type="text" onChange={onChange} class="form-control" name="name" id="" aria-describedby="emailHelpId" placeholder="Name" required/>
+        <small style={{color:"#a0a0a7"}} id="emailHelpId" class="form-text">Please enter your Name</small>
+        </div>
+ 
+
+
+        {/* email */}
+    <div className='mb-3'>
+        <label for="" class="form-label">Email</label>
+        <input type="email" onChange={onChange} class="form-control" name="email" id="" aria-describedby="emailHelpId" placeholder="abc@mail.com" required/>
+        <small style={{color:"#a0a0a7"}} id="emailHelpId" class="form-text ">Please enter your email</small>
+        </div>
+ 
+
+
+        {/* password */}
+        <div className='mb-3'>
+        <label for="" class="form-label">Password</label>
+        <span  style={{float:"right"}}><i onClick={eyePassfun} class={eyePass}></i></span>
+        <input type={visiblepass} onChange={onChange} class="form-control" name="password" id="" aria-describedby="emailHelpId" placeholder="Enter password" required/>
+        
+        <small style={{color:"#a0a0a7"}} id="emailHelpId" class="form-text">
+            Choose a strong password having capital and <br></br>
+            small letters, numbers and special characers</small>
+        </div>
+ 
+
+
+    {/* confirm password */}
+    <div className='mb-3'>
+        <label for=""class="form-label">Confirm Password</label>
+        <span  style={{float:"right"}}><i onClick={eyeConfirmfun} class={eyeConfirm}></i></span>
+        <input type={visibleconfirm} onChange={onChange} class="form-control" name="confirmPassword" id="" aria-describedby="emailHelpId" placeholder="Enter password" required/>
+        <small id="confirmpass" style={{color:"red"}} class="form-text mb-2">{notEqual} </small>
+        </div>
+
+      
+     
+    
+      {/* <!-- Button --> */}
+      <div className="controls d-flex justify-content-center mb-2">
+        <button className="btn btn-primary" onClick={handleSubmit}type='submit'>Register</button>
+      </div>
+    
+   
+  </fieldset >
+  <div>
+
+      <Link to="/login" className='text-decoration-none'>Already a user? Login now.</Link>
+
+      </div>
+</form>
+
+      
+
+</div>
         </>
     )
 }
