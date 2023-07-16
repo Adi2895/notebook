@@ -8,6 +8,7 @@ const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 
 var jwt = require('jsonwebtoken');
+var otpGenerator  = require('otp-generator')
 const {fetchuser} = require('../middleware/fetchuser')
 const JWT_SECRET = 'Adityajangrais$a$good%$boy';
 
@@ -46,6 +47,8 @@ router.post("/createuser",
             return res.status(400).json({success ,  error: "Sorry a user with the same email already exist" })
         }
 
+        
+
 
         var salt = bcrypt.genSaltSync(10);
         secpass = bcrypt.hashSync(req.body.password, salt);
@@ -58,19 +61,12 @@ router.post("/createuser",
             password: secpass,
         })
 
+        user.save();
 
-        const data = {
-            user: {
-                // fetch the user id
-                id: user.id
-            }
-        }        
         
-        const authToken = jwt.sign(data, JWT_SECRET);
-        // authtoken is provided to the user to authenticiate him/herself
-        // done with the help of jsonwebtoken package
         success = true; 
-        res.json(success, authToken);
+        
+        res.status(200).json(success);
     } catch (error) {
         
         // if there is some error in the code above 500 status code will be showed
@@ -131,7 +127,7 @@ router.post("/login", [
         // authtoken is provided to the user to authenticiate him/herself
         // done with the help of jsonwebtoken package
         success = true; 
-        res.json({success, authToken });
+        res.status(200).json({success, authToken });
 
     } catch (error) {
 
@@ -161,9 +157,9 @@ fetchuser
    
 
     try {
-        userId = req.user.id;
-        const user = await User.findById(userId).select("-password")
-        res.send(user);
+        user = req.user.id;
+        const user = await User.findById(user).select("-password")
+        return res.send(user);
     } catch (error) {
 
         // if there is some error in the code above 500 status code will be showed
@@ -172,4 +168,79 @@ fetchuser
 
     }
 })
+
+
+router.get("/otpgenerate", async(req, res)=>{
+    try {
+        
+        const{email} = req.query;
+        const user = await User.findOne({email});
+        if(user){
+            res.app.locals.email = email;
+            res.app.locals.OTP = otpGenerator.generate(6, { upperCaseAlphabets: false, lowerCaseAlphabets: false, specialChars: false });
+            console.log(res.app.locals.OTP)
+            return res.status(200).json({otp : res.app.locals.OTP,msg:`OTP sended at ${email} successfully `})
+        } else {
+            return res.status(404).json({msg:"Invalid user"})
+        }
+
+        // then a request for the mail will get strike.
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({msg:"Internal server error"});
+    }
+})
+
+router.get("/otpverify", async(req, res)=>{
+   
+    try {
+        const otp = req.query.otp;
+        if(parseInt(req.app.locals.OTP) == parseInt(otp)) {
+            req.app.locals.otp = null;
+            res.app.locals.resetsession = true;
+            return res.status(200).json({msg:"OTP verified successfully"})
+        } else {
+            return res.status(400).json({otp:otp, msg:"Invalid OTP"})
+        }
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({msg:"Internal server error"});
+    }
+})    
+
+
+router.post("/resetpassword", async(req, res)=>{
+   
+    
+    try {
+    
+    if(req.app.locals.resetsession === false){
+            return res.status(400).json({msg:"Session expire, again request for the OTP"})
+        }
+
+        const{email} = req.body;
+        if(req.app.locals.email != email) {
+            return res.status(400).json({msg:"Invalid user"})
+        }
+        const user = await User.findOne({email});
+        if(user){
+            res.app.locals.email = "";
+            var salt = bcrypt.genSaltSync(10);
+            secpass = bcrypt.hashSync(req.body.password, salt);
+            await User.updateOne({email:email},{password:secpass});
+            req.app.locals.resetsession = false;
+            return res.status(200).json({msg:"Password updated"})
+        } else {
+            return res.status(400).json({msg:"Invalid user"})
+        }
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({msg:"Internal server error"});
+}
+})    
+
+
+
+
 module.exports = router
