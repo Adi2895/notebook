@@ -6,7 +6,7 @@ var cors = require('cors')
 
 const app = express(); 
 
-const port = 12455;
+const port = 3000;
 app.use(cors());
 app.use(express.json());
 // available routes
