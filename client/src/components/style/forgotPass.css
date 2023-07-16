@@ -1,0 +1,16 @@
+.arrow{
+    width: 150px;
+    height: 150px;
+}
+
+.arrow-img{
+    transform: rotate(38deg) scale(1);
+    position:relative;
+    bottom:80px;
+    right:14px
+}
+
+form{
+    /* position:absolute; */
+    /* top:100px */
+}
