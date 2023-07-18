@@ -1,8 +1,9 @@
 import React from 'react'
 export default function about() {
+    // const user = 
     return (
         <div>
-            <div className="container">
+            <div className="container justify content center">
             <h2>Welcome user!</h2>
             <p>We are extremly happy that you choose us to make notes from our websites. 
                 <strong> yourNotes.com </strong>
