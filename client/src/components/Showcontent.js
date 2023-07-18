@@ -10,12 +10,10 @@ export default function Showcontent() {
   return (
     <>
     <div className=''>
-      <h1>Title:</h1>
-      <h1>
-    
-        {note.title}
-        </h1>
-    <h1 className='mb-2'>Description</h1>
+      <h1> Here is your detailed note.</h1>
+      <h3>Title: {note.title}</h3>
+     
+    <h2 className='mb-2'>Description</h2>
     <br/>
     <div >
       <p>{note.description}</p>
