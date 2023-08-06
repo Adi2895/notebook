@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import {useDispatch} from 'react-redux'
-// import actionCreators from './state/index'
-// import { bindActionCreators } from 'redux';
+
 import "./style/login.css";
 
 const Login = (props) => {
@@ -24,6 +22,13 @@ const Login = (props) => {
       seteyePass("fa-solid fa-eye");
     }
   };
+
+    useEffect(()=>{
+      if(!localStorage.getItem("token")){
+          navigate("/login");
+      } else 
+        navigate("/");
+  })
 
   const handleSubmit = async (e) => {
     e.preventDefault();

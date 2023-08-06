@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 export default function Navbar(props) {
 
@@ -9,6 +9,12 @@ export default function Navbar(props) {
         localStorage.removeItem('token'); 
         navigate("/login");
     }
+
+    // useEffect(()=>{
+    //     if(!localStorage.getItem("token"))
+    //     navigate("/login")
+    // })
+
     React.useEffect(() => {
         // Google Analytics
     }, [location]);

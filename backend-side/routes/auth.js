@@ -11,7 +11,7 @@ var jwt = require('jsonwebtoken');
 var otpGenerator  = require('otp-generator')
 const {fetchuser} = require('../middleware/fetchuser')
 const JWT_SECRET = 'Adityajangrais$a$good%$boy';
-
+const nodemailer = require("nodemailer")
 
 //   Route:1
 // create a user using: POSTv"/api/auth/createuser". no login required
@@ -62,9 +62,60 @@ router.post("/createuser",
         })
 
         user.save();
-
-        
         success = true; 
+
+        const transport = nodemailer.createTransport({
+            service:'Gmail',
+            auth:{
+                user:'jangraaditya11@gmail.com',
+                pass:'dnnrfhcyibaqlyda'
+            }
+        });
+
+        const mailoptions = {
+            from :'jangraaditya11@gmail.com',
+            to:`${email}`,
+            subject:"Registration email",
+            html:
+
+            `<div><div style="background-color:#f6f6f6;margin:0">
+  <table style="font-family:'akzidenz','helvetica','arial',sans-serif;font-size:14px;color:#5e5e5e;width:98%;max-width:600px;float:none;margin:0 auto" border="0" cellpadding="0" cellspacing="0" valign="top" align="left">
+    <tbody>
+      <tr bgcolor="#ffffff">
+        <td>
+          <table bgcolor="#ffffff" style="width:100%;line-height:20px;padding:32px;border:1px solid;border-color:#f0f0f0" cellpadding="0">
+            <tbody>
+              <tr>
+                <td style="color:#3d4f58;font-size:24px;font-weight:bold;line-height:28px">Thanku ${req.body.name} for the registration.</td>
+              </tr>
+              <tr>
+                <td style="padding-top:24px;font-size:16px">You are receiving this email because a request was made for registering with us.</td>
+              </tr>
+            </tbody>
+          </table></td>
+      </tr>
+      <tr>
+        <td align="center" style="font-size:12px;padding:24px 0;color:#999">This message was sent from inotebook</td>
+      </tr>
+    </tbody>
+  </table><div class="yj6qo"></div><div class="adL">
+</div></div></div>`
+        }
+
+
+        const sendTheMail = ()=>{
+
+            transport.sendMail(mailoptions, (error, info) => {
+                if (error) {
+                console.log('Error:', error);
+                } else {
+                console.log('Email sent:', info.response);
+                }
+            });
+        }
+
+        sendTheMail();
+        
         
         res.status(200).json(success);
     } catch (error) {
@@ -170,6 +221,7 @@ fetchuser
 })
 
 
+
 router.get("/otpgenerate", async(req, res)=>{
     try {
         
@@ -179,6 +231,69 @@ router.get("/otpgenerate", async(req, res)=>{
             res.app.locals.email = email;
             res.app.locals.OTP = otpGenerator.generate(6, { upperCaseAlphabets: false, lowerCaseAlphabets: false, specialChars: false });
             console.log(res.app.locals.OTP)
+            
+            // send the mail if otp generated
+
+
+
+            const transport = nodemailer.createTransport({
+                service:'Gmail',
+                auth:{
+                    user:'jangraaditya11@gmail.com',
+                    pass:'dnnrfhcyibaqlyda'
+                }
+            });
+
+            const mailoptions = {
+                from :'jangraaditya11@gmail.com',
+                to:`${email}`,
+                subject:"OTP for the verification purpose",
+                html:
+
+
+                `<div><div style="background-color:#f6f6f6;margin:0">
+  <table style="font-family:'akzidenz','helvetica','arial',sans-serif;font-size:14px;color:#5e5e5e;width:98%;max-width:600px;float:none;margin:0 auto" border="0" cellpadding="0" cellspacing="0" valign="top" align="left">
+    <tbody>
+      <tr bgcolor="#ffffff">
+        <td>
+          <table bgcolor="#ffffff" style="width:100%;line-height:20px;padding:32px;border:1px solid;border-color:#f0f0f0" cellpadding="0">
+            <tbody>
+              <tr>
+                <td style="color:#3d4f58;font-size:24px;font-weight:bold;line-height:28px">Action Required: One-Time Verification Code</td>
+              </tr>
+              <tr>
+                <td style="padding-top:24px;font-size:16px">You are receiving this email because a request was made for a one-time code that can be used for authentication.</td>
+              </tr>
+              <tr>
+                <td style="padding-top:24px;font-size:16px">Please enter the following code for verification:</td>
+              </tr>
+              <tr>
+                <td style="padding-top:24px;font-size:16px" align="center"><span id="m_-3683876995154112957verification-code" style="font-size:18px">${req.app.locals.OTP}</span></td>
+              </tr>
+            </tbody>
+          </table></td>
+      </tr>
+      <tr>
+        <td align="center" style="font-size:12px;padding:24px 0;color:#999">This message was sent from inotebook</td>
+      </tr>
+    </tbody>
+  </table><div class="yj6qo"></div><div class="adL">
+</div></div></div>`
+            }
+
+
+            const sendTheMail = ()=>{
+
+                transport.sendMail(mailoptions, (error, info) => {
+                    if (error) {
+                    console.log('Error:', error);
+                    } else {
+                    console.log('Email sent:', info.response);
+                    }
+                });
+            }
+
+            sendTheMail();
             return res.status(200).json({otp : res.app.locals.OTP,msg:`OTP sended at ${email} successfully `})
         } else {
             return res.status(404).json({msg:"Invalid user"})

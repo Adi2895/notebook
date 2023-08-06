@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import "./style/signup.css";
 // import arrow from "./static/arrow.png"
 import { useNavigate, Link } from "react-router-dom";
@@ -36,6 +36,13 @@ const Notes = (props) => {
       seteyeConfirm("fa-solid fa-eye");
     }
   };
+
+//   useEffect(()=>{
+//     if(localStorage.getItem("token")){
+//         navigate("/");
+//     } else 
+//         navigate("/signup");
+// })
 
   const handleSubmit = async (e) => {
     const port = "http://localhost:3000";
