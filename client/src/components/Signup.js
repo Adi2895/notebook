@@ -1,21 +1,32 @@
-import React, { useState,useEffect } from "react";
+import React, { useState , useEffect } from "react";
 import "./style/signup.css";
 // import arrow from "./static/arrow.png"
 import { useNavigate, Link } from "react-router-dom";
 
-const Notes = (props) => {
+
+const Signup = (props) => {
+  const navigate = useNavigate();
+  useEffect(()=>{
+    if(localStorage.getItem("token"))
+      navigate("/") 
+  })
+
   const [credentials, setCredentials] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+
+  const [err1, seterr1] = useState("");
+  const [err2, seterr2] = useState("");
+  const [err3, seterr3] = useState("");
   const [notEqual, setnotEqual] = useState("");
   const [eyePass, seteyePass] = useState("fa-solid fa-eye");
   const [eyeConfirm, seteyeConfirm] = useState("fa-solid fa-eye");
   const [visiblepass, setVisiblepass] = useState("password");
   const [visibleconfirm, setVisibleconfirm] = useState("password");
-  const navigate = useNavigate();
+  
 
   const eyePassfun = () => {
     if (eyePass === "fa-solid fa-eye") {
@@ -37,23 +48,53 @@ const Notes = (props) => {
     }
   };
 
-//   useEffect(()=>{
-//     if(localStorage.getItem("token")){
-//         navigate("/");
-//     } else 
-//         navigate("/signup");
-// })
+  function isValidEmail(email) {
+      const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return regex.test(email);// const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    
+}
 
   const handleSubmit = async (e) => {
     const port = "http://localhost:3000";
     e.preventDefault();
 
-    if (credentials.password === credentials.confirmPassword) {
-      if(credentials.name === ""  ||credentials.email === ""  ||
-      credentials.password === ""  ||credentials.confirmPassword === ""){
-      props.showAlert("Please fill the required details.", "danger");
-        return;
+
+    if (credentials.name === "") {
+      setTimeout(()=>{
+        seterr1("");
+      },2000)
+      seterr1("Name Is Required");
+    } else seterr1("");
+
+    if (credentials.email === "") {
+      setTimeout(()=>{
+        seterr2("");
+      },2000)
+      seterr2("Email Is Required");
+    } else {
+      seterr2("");
     }
+    if (credentials.password === "") {
+      setTimeout(()=>{
+        seterr3("");
+      },2000)
+      seterr3("Password Is Required");
+    } else {
+      seterr3("");
+    }
+
+
+
+
+
+    if(!isValidEmail(credentials.email)){
+      setTimeout(()=>{
+        seterr2("");
+      },2000)
+      seterr2("Invalid email")
+        return;
+    } else if (credentials.password === credentials.confirmPassword) {
+      
       const response = await fetch(`${port}/api/auth/createuser`, {
         method: "POST",
         headers: {
@@ -67,6 +108,7 @@ const Notes = (props) => {
       });
       
       const json = await response.json();
+      
       // alert(response.status)
       if (json.status === 500 || json.status === 400) {
         if (json.status === 500) {
@@ -79,12 +121,12 @@ const Notes = (props) => {
           `Great! ${credentials.name}, You registered Successfully`,
           "primary"
         );
-        navigate("/login");
+        navigate("/login");       
       }
     } else {
       setTimeout(() => {
         setnotEqual("");
-      }, 3000);
+      }, 2000);
       setnotEqual("Please confirm the password");
     }
   };
@@ -108,13 +150,13 @@ const Notes = (props) => {
             </div>
 
             <div className="mb-3">
-              <label for="" class="form-label">
+              <label for="" className="form-label">
                 Name
               </label>
               <input
                 type="text"
                 onChange={onChange}
-                class="form-control"
+                className="form-control"
                 name="name"
                 id=""
                 aria-describedby="emailHelpId"
@@ -122,23 +164,23 @@ const Notes = (props) => {
                 required
               />
               <small
-                style={{ color: "#a0a0a7" }}
+                style={{ color: "red" }}
                 id="emailHelpId"
-                class="form-text"
+                className="form-text"
               >
-                Please enter your Name
+                {err1}
               </small>
             </div>
 
             {/* email */}
             <div className="mb-3">
-              <label for="" class="form-label">
+              <label for="" className="form-label">
                 Email
               </label>
               <input
                 type="email"
                 onChange={onChange}
-                class="form-control"
+                className="form-control"
                 name="email"
                 id=""
                 aria-describedby="emailHelpId"
@@ -146,26 +188,26 @@ const Notes = (props) => {
                 required
               />
               <small
-                style={{ color: "#a0a0a7" }}
+                style={{ color: "red" }}
                 id="emailHelpId"
-                class="form-text "
+                className="form-text "
               >
-                Please enter your email
+                {err2}
               </small>
             </div>
 
             {/* password */}
             <div className="mb-3">
-              <label for="" class="form-label">
+              <label for="" className="form-label">
                 Password
               </label>
               <span style={{ float: "right" }}>
-                <i onClick={eyePassfun} class={eyePass}></i>
+                <i onClick={eyePassfun} className={eyePass}></i>
               </span>
               <input
                 type={visiblepass}
                 onChange={onChange}
-                class="form-control"
+                className="form-control"
                 name="password"
                 id=""
                 aria-describedby="emailHelpId"
@@ -174,27 +216,26 @@ const Notes = (props) => {
               />
 
               <small
-                style={{ color: "#a0a0a7" }}
+                style={{ color: "red" }}
                 id="emailHelpId"
-                class="form-text"
+                className="form-text"
               >
-                Choose a strong password having capital and <br></br>
-                small letters, numbers and special characers
+                {err3}
               </small>
             </div>
 
             {/* confirm password */}
             <div className="mb-3">
-              <label for="" class="form-label">
+              <label for="" className="form-label">
                 Confirm Password
               </label>
               <span style={{ float: "right" }}>
-                <i onClick={eyeConfirmfun} class={eyeConfirm}></i>
+                <i onClick={eyeConfirmfun} className={eyeConfirm}></i>
               </span>
               <input
                 type={visibleconfirm}
                 onChange={onChange}
-                class="form-control"
+                className="form-control"
                 name="confirmPassword"
                 id=""
                 aria-describedby="emailHelpId"
@@ -204,7 +245,7 @@ const Notes = (props) => {
               <small
                 id="confirmpass"
                 style={{ color: "red" }}
-                class="form-text mb-2"
+                className="form-text mb-2"
               >
                 {notEqual}{" "}
               </small>
@@ -231,4 +272,4 @@ const Notes = (props) => {
     </>
   );
 };
-export default Notes;
+export default Signup;

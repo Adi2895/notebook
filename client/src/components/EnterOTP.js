@@ -1,10 +1,14 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { useNavigate, Link} from 'react-router-dom';
 
 export default function EnterOTP(props) {
     const navigate = useNavigate();
     const [info, setInfo] = useState({OTP:""});
-
+    useEffect(()=>{
+      if(localStorage.getItem("token")){ 
+        navigate(`/`)
+      } 
+    })
     const handleSubmit = async(e)=>{
         e.preventDefault();
         const port = "http://localhost:3000"
@@ -35,11 +39,11 @@ export default function EnterOTP(props) {
 }
   return (
     <form onSubmit={handleSubmit} className="d-flex justify-content-center">
-      <div class="mb-3">
-        <label for="" class="form-label"> Enter OTP</label>
-        <input onChange={onChange} class="form-control mb-3" name="OTP" id=""  placeholder="Please enter the OTP"/>
-        <Link class="text-decoration-none" to="/resetpassword" >Send OTP again</Link>
-        <button type="submit" style={{marginLeft:"121px"}} name="" id="" class="btn btn-primary text-center" >Submit</button>
+      <div className="mb-3">
+        <label for="" className="form-label"> Enter OTP</label>
+        <input onChange={onChange} className="form-control mb-3" name="OTP" id=""  placeholder="Please enter the OTP"/>
+        <Link className="text-decoration-none" to="/resetpassword" >Send OTP again</Link>
+        <button type="submit" style={{marginLeft:"121px"}} name="" id="" className="btn btn-primary text-center" >Submit</button>
       </div>
     </form>
   )

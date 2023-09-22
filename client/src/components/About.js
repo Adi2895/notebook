@@ -1,6 +1,14 @@
-import React from 'react'
-export default function about() {
-    // const user = 
+import React,{useEffect} from 'react'
+import { useNavigate } from 'react-router-dom'
+export default function About() {
+
+    const navigate = useNavigate();
+    useEffect(()=>{
+        if(!localStorage.getItem("token")) {
+            navigate("/login")
+        }
+    },[])
+
     return (
         <>
         <div>

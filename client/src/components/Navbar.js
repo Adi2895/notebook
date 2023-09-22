@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 export default function Navbar(props) {
 
@@ -10,10 +10,6 @@ export default function Navbar(props) {
         navigate("/login");
     }
 
-    // useEffect(()=>{
-    //     if(!localStorage.getItem("token"))
-    //     navigate("/login")
-    // })
 
     React.useEffect(() => {
         // Google Analytics
@@ -33,7 +29,7 @@ export default function Navbar(props) {
                                 <Link className={`nav-link ${location.pathname === "/" ? "active" : ""}`} aria-current="page" to="/">Home</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className={`nav-link ${location.pathname === "/about" ? "active" : ""}`} to="/about" > About</Link>
+                                <Link className={`nav-link ${location.pathname === "/about" ? "active" : ""}`} to="/about" >About</Link>
                             </li>
                         </ul>
                         { !localStorage.getItem('token') ? <form className="d-flex">

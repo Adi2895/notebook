@@ -6,11 +6,11 @@ export default function Home(props) {
     const navigate = useNavigate();
 
     useEffect(()=>{
-        if(localStorage.getItem("token")){
-            navigate("/");
-        } else 
+        if(!localStorage.getItem("token")){
             navigate("/login");
-    })
+        } 
+           
+    }, [])
     return (
         <div>
             <Notes showAlert={showAlert} />

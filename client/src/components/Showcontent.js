@@ -1,12 +1,22 @@
-import React , {useContext } from 'react'
+import React , {useContext, useEffect } from 'react'
 import noteContext from '../context/noteContext';
-import { useParams } from 'react-router-dom'
+import { useParams , useNavigate} from 'react-router-dom'
 
 export default function Showcontent() {
+  const navigate = useNavigate();
+  
   const {id} = useParams();
   const context = useContext(noteContext);
     const { notes} = context;
     const note = notes.find((note) => note._id === id);
+
+    useEffect(()=>{
+      if(localStorage.getItem("token")){ 
+        navigate(`/note/${id}`)
+      } else {
+        navigate("/login")
+      }
+    })
   return (
     <>
     <div className=''>

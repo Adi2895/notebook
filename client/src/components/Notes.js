@@ -71,7 +71,7 @@ const Notes = (props) => {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
+              <h5 style={{color:"black"}} className="modal-title" id="exampleModalLabel">
                 Edit Note
               </h5>
               <button
@@ -83,7 +83,7 @@ const Notes = (props) => {
             </div>
             <div className="modal-body">
               <form className="my-3">
-                <div className="mb-3">
+                <div style={{color:"black"}} className="mb-3">
                   <label htmlFor="title" className="form-label">
                     Title
                   </label>
@@ -98,7 +98,7 @@ const Notes = (props) => {
                     onChange={onChange}
                   />
                 </div>
-                <div className="mb-3">
+                <div style={{color:"black"}} className="mb-3">
                   <label htmlFor="description" className="form-label">
                     Description
                   </label>
@@ -112,7 +112,7 @@ const Notes = (props) => {
                     onChange={onChange}
                   />
                 </div>
-                <div className="mb-3">
+                <div style={{color:"black"}} className="mb-3">
                   <label htmlFor="tag" className="form-label">
                     Tag
                   </label>
@@ -158,11 +158,11 @@ const Notes = (props) => {
         <div className="container">
           {notes.length === 0 && "No notes to display"}
         </div>
-        {/* {notes.map((note) => {
+        {notes.map((note) => {
           return (
             <Noteitem key={note._id} updateNote={updateNote} note={note} />
           );
-        })} */}
+        })}
       </div>
     </>
   );

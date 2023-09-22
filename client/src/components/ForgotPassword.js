@@ -1,14 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import "./style/forgotPass.css"
 import arrow from "./static/arrow.png"
 import { useNavigate} from 'react-router-dom';
 
 export default function ForgotPassword(props) {
 
+  const navigate = useNavigate();
+  useEffect(()=>{
+    if(localStorage.getItem("token")){ 
+      navigate(`/`)
+    } 
+  })
    
     const [credentials, setCredentials] = useState({email: ""})
     
-    const navigate = useNavigate();
+    
     
     const port = "http://localhost:3000"
 
@@ -49,7 +55,7 @@ export default function ForgotPassword(props) {
   <div className='d-flex justify-content-center '>
 
   <div className='arrow mb-5'>
-    <img src={arrow} class="arrow-img img-fluid rounded-top " alt=""/>
+    <img src={arrow} className="arrow-img img-fluid rounded-top " alt=""/>
   </div>
 
 
