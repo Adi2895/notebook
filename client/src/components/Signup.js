@@ -2,6 +2,7 @@ import React, { useState , useEffect } from "react";
 import "./style/signup.css";
 // import arrow from "./static/arrow.png"
 import { useNavigate, Link } from "react-router-dom";
+const baseUrl = process.env.REACT_APP_BASE_URL;
 
 
 const Signup = (props) => {
@@ -55,7 +56,7 @@ const Signup = (props) => {
 }
 
   const handleSubmit = async (e) => {
-    const port = "http://localhost:3000";
+   
     e.preventDefault();
 
 
@@ -95,7 +96,7 @@ const Signup = (props) => {
         return;
     } else if (credentials.password === credentials.confirmPassword) {
       
-      const response = await fetch(`${port}/api/auth/createuser`, {
+      const response = await fetch(`${baseUrl}/api/auth/createuser`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

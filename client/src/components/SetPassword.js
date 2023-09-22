@@ -1,5 +1,6 @@
 import React, {useState,useEffect} from 'react'
 import { useNavigate } from 'react-router-dom';
+const baseUrl = process.env.REACT_APP_BASE_URL;
 
 export default function SetPassword(props) {
 
@@ -64,12 +65,12 @@ export default function SetPassword(props) {
             seterr1("Invalid Email")
         }
         
-        const port = "http://localhost:3000";
+   
         e.preventDefault();
         if(credentials.password === credentials.confirmPassword){
             setnotEqual(<i className="fa-solid fa-check" style={{color: "#24fbff;"}}></i>)
 
-            const response = await fetch(`${port}/api/auth/resetpassword`, {
+            const response = await fetch(`${baseUrl}/api/auth/resetpassword`, {
                                     
             
                 method:"POST", 

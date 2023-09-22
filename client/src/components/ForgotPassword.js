@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import "./style/forgotPass.css"
 import arrow from "./static/arrow.png"
 import { useNavigate} from 'react-router-dom';
-
+const baseUrl = process.env.REACT_APP_BASE_URL;
 export default function ForgotPassword(props) {
 
   const navigate = useNavigate();
@@ -13,16 +13,12 @@ export default function ForgotPassword(props) {
   })
    
     const [credentials, setCredentials] = useState({email: ""})
-    
-    
-    
-    const port = "http://localhost:3000"
 
      // OTP generate routing get called 
   const handleSubmit = async(e)=>{
    
     e.preventDefault();
-    const response = await fetch(`${port}/api/auth/otpgenerate?email=${credentials.email}`,
+    const response = await fetch(`${baseUrl}/api/auth/otpgenerate?email=${credentials.email}`,
     {              
       method: 'GET',
       headers: {

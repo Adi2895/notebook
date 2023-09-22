@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { useNavigate, Link} from 'react-router-dom';
-
+const baseUrl = process.env.REACT_APP_BASE_URL;
 export default function EnterOTP(props) {
     const navigate = useNavigate();
     const [info, setInfo] = useState({OTP:""});
@@ -11,9 +11,9 @@ export default function EnterOTP(props) {
     })
     const handleSubmit = async(e)=>{
         e.preventDefault();
-        const port = "http://localhost:3000"
+        
         console.log(info.OTP)
-        const response = await fetch(`${port}/api/auth/otpverify?otp=${info.OTP}`, 
+        const response = await fetch(`${baseUrl}/api/auth/otpverify?otp=${info.OTP}`, 
         {                      
             method:"GET", 
             headers: {
