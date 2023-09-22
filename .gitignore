@@ -1,2 +1,3 @@
 /backend-side/node_modules
 /client/node_modules
+/client/.env
